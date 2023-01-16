@@ -135,22 +135,10 @@ class ViewController: UIViewController {
                 vertLines: self.incomingData.vertLines
             )
             // draw grid and save all CAShapeLayers
-            self.drawGrid(
-                self.cgGridView,
-                data: self.blocksData
-            )
+            self.cgGridView.drawGrid(data: self.blocksData)
             // fill grid blocks according to passed blocks data
-            self.fillGrid(
-                self.cgGridView,
-                with: self.blocksData
-            )
+            self.cgGridView.fillGrid(with: self.blocksData)
         }
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-
     }
 
     // parse incoming 1d array to 2d array
@@ -212,51 +200,6 @@ class ViewController: UIViewController {
         )
     }
 
-    // draw grid and save all CAShapeLayers
-    func drawGrid(
-        _ view: UIView,
-        data: BlocksData
-    ) {
-        for blocksLine in blocksData.blocks {
-            for block in blocksLine {
-
-                let x = block.startPoint.x
-                let y = block.startPoint.y
-
-                let levelLayer = CAShapeLayer()
-                levelLayer.path = UIBezierPath(
-                    rect: CGRect(
-                        x: view.bounds.origin.x + x,
-                        y: view.bounds.origin.y + y,
-                        width: blocksData.blockWidth,
-                        height: blocksData.blockHeight
-                    )
-                ).cgPath
-                levelLayer.fillColor = .none
-                levelLayer.lineWidth = 1
-                levelLayer.strokeColor = UIColor.black.cgColor
-
-                block.setLayer(levelLayer)
-                view.layer.addSublayer(levelLayer)
-            }
-        }
-
-    }
-
-    // fill grid blocks according to passed blocks data
-    func fillGrid(_ view: UIView, with blocksData: BlocksData) {
-        for dataLine in blocksData.blocks {
-            for block in dataLine {
-
-                if block.isSelected {
-                    block.layer?.fillColor = UIColor.blue.withAlphaComponent(0.7).cgColor
-                } else {
-                    block.layer?.fillColor = .none
-                }
-            }
-        }
-    }
-
 
     func updateData(with point: CGPoint) {
         for dataLine in blocksData.blocks {
@@ -292,7 +235,7 @@ class ViewController: UIViewController {
     func tapAction(_ sender: UITapGestureRecognizer) {
         let point = sender.location(in: cgGridView)
         updateData(with: point)
-        fillGrid(cgGridView, with: blocksData)
+        cgGridView.fillGrid(with: blocksData)
     }
 
     @objc
@@ -302,10 +245,10 @@ class ViewController: UIViewController {
             panGestureStartLocation = sender.location(in: cgGridView)
         case .changed:
             updateData(startPoint: panGestureStartLocation, endPoint: sender.location(in: cgGridView))
-            fillGrid(cgGridView, with: blocksData)
+            cgGridView.fillGrid(with: blocksData)
         case .ended:
             updateData(startPoint: panGestureStartLocation, endPoint: sender.location(in: cgGridView))
-            fillGrid(cgGridView, with: blocksData)
+            cgGridView.fillGrid(with: blocksData)
         default:
             break
         }
