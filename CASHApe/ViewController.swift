@@ -7,6 +7,7 @@
 
 import UIKit
 import CoreGraphics
+import CGPathIntersection
 
 enum GridAction {
     case draw
@@ -60,7 +61,7 @@ class ViewController: UIViewController {
 
     var data = [[Int]]()
 
-    let cgGridView = UIView()
+    let cgGridView = GridView()
 
     // set on pan gesture start
     var panGestureStartLocation: CGPoint = .zero
@@ -122,22 +123,34 @@ class ViewController: UIViewController {
         cgGridView.addGestureRecognizer(panGesture)
 
         processIncomingData(incomingData)
+
+        cgGridView.onLayoutSubviews = { [weak self] in
+            guard let self else { return }
+
+            //creates block data from incoming data
+            self.createBlockData(
+                from: self.data,
+                for: self.cgGridView,
+                horLines: self.incomingData.horLines,
+                vertLines: self.incomingData.vertLines
+            )
+            // draw grid and save all CAShapeLayers
+            self.drawGrid(
+                self.cgGridView,
+                data: self.blocksData
+            )
+            // fill grid blocks according to passed blocks data
+            self.fillGrid(
+                self.cgGridView,
+                with: self.blocksData
+            )
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        //creates block data from incoming data
-        createBlockData(
-            from: data,
-            for: cgGridView,
-            horLines: incomingData.horLines,
-            vertLines: incomingData.vertLines
-        )
-        // draw grid and save all CAShapeLayers
-        drawGrid(cgGridView, data: blocksData)
-        // fill grid blocks according to passed blocks data
-        fillGrid(cgGridView, with: blocksData)
+
     }
 
     // parse incoming 1d array to 2d array

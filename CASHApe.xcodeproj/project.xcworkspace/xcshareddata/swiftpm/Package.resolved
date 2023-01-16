@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "cgpathintersection",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/calda/CGPathIntersection",
+      "state" : {
+        "revision" : "69b640fb0ba2329d28235421f4612311965a59a3",
+        "version" : "4.0.0"
+      }
+    }
+  ],
+  "version" : 2
+}
